@@ -33,4 +33,10 @@ public class ScheduleService {
     public List<Schedule> findSchedulesByCourse(String courseId) {
         return repository.findByCourseId(safeLongNull(courseId));
     }
+    public void deleteSchedule(String scheduleId) {
+        repository.deleteById(safeLongNull(scheduleId));
+    }
+    public Optional<Schedule> findById(String scheduleId) {
+        return repository.findById(safeLongNull(scheduleId));
+    }
 }

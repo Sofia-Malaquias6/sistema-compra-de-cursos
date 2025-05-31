@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Lista de Cursos</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<header>
+    <h1>Lista de Cursos</h1>
+    <p>Bem-vindo, <span th:text="${user.name}">Usuário</span>!</p>
+    <a th:href="@{/home}">Home</a> |
+    <a th:href="@{/courses/new}">Novo Curso</a> |
+    <a th:href="@{/logout}">Sair</a>
+</header>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Descrição</th>
+        <th>Duração (h)</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="course : ${courses}">
+        <td th:text="${course.id}"></td>
+        <td th:text="${course.title}"></td>
+        <td th:text="${course.description}"></td>
+        <td th:text="${course.duration}"></td>
+        <td>
+            <a th:href="@{|/courses/edit/${course.id}|}">Editar</a> |
+            <a th:href="@{|/courses/delete/${course.id}|}"
+               onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

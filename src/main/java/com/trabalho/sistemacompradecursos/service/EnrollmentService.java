@@ -58,5 +58,11 @@ public class EnrollmentService {
         return courseRepository.findById(safeLongNull(id))
                 .orElseThrow(() -> new IllegalArgumentException("Course not found: " + id));
     }
+    public void deleteEnrollmentById(String id) {
+        Long enrollmentId = safeLongNull(id);
+        if (repository.existsById(enrollmentId)) {
+            repository.deleteById(enrollmentId);
+        }
+    }
 }
 
