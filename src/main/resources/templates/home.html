@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<header>
+    <h1>Bem-vindo, <span th:text="${user.name}">Usuário</span>!</h1>
+    <p>Usuário: <b th:text="${user.email}">username</b></p>
+    <a th:href="@{/logout}">Sair</a>
+</header>
+
+<hr/>
+
+<main>
+    <h2>Área do Sistema</h2>
+    <ul>
+        <li><a th:href="@{/courses}">Gerenciar Cursos</a></li>
+        <li><a th:href="@{/enrollments}">Minhas Matrículas</a></li>
+        <li><a th:href="@{/users}">Lista de Usuários</a></li>
+    </ul>
+</main>
+
+</body>
+</html>

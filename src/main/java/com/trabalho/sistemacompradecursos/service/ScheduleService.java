@@ -21,7 +21,7 @@ public class ScheduleService {
     }
 
     public ScheduleDTO createSchedule(ScheduleDTO schedule) {
-        return null;
+        return toDTO( repository.save(fromDTO(schedule)));
     }
     public Optional<ScheduleDTO> updateSchedule(ScheduleDTO schedule){
         return repository.findById(safeLongNull(schedule.id())).map(existing ->{
@@ -30,8 +30,7 @@ public class ScheduleService {
     }
 
 
-    public List<Schedule> findSchedulesByCourse(Long courseId) {
-        // TODO: Return schedules for course
-        return null;
+    public List<Schedule> findSchedulesByCourse(String courseId) {
+        return repository.findByCourseId(safeLongNull(courseId));
     }
 }

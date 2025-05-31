@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
 @AllArgsConstructor
@@ -16,12 +17,14 @@ public class DataInitializer implements CommandLineRunner {
     private final EnrollmentRepository enrollmentRepository;
     private final GradeRepository gradeRepository;
     private final ScheduleRepository scheduleRepository;
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public void run(String... args) throws Exception {
         if (userRepository.count() == 0) {
-            User user = new User(null, "Alice", "alice@exemplo.com", "123456", null);
+            User user = new User(null, "Alice", "alice@exemplo.com", passwordEncoder.encode("123456"), null);
             userRepository.save(user);
-            User user1 = new User(null, "Sofia", "sofiamalaquias@exemplo.com", "123456", null);
+            User user1 = new User(null, "Sofia", "sofiamalaquias@exemplo.com", passwordEncoder.encode("1234567"), null);
             userRepository.save(user1);
         }
     }
