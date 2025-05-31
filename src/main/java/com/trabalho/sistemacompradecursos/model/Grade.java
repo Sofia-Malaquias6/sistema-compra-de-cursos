@@ -1,10 +1,12 @@
 package com.trabalho.sistemacompradecursos.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @Entity
+@AllArgsConstructor
 public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
