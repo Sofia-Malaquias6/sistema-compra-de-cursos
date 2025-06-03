@@ -20,39 +20,42 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getSenha(); // supondo que você tem um campo password
+        return user.getSenha();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail(); // login baseado no email
+        return user.getEmail();
+    }
+    public User getUser() {
+        return this.user;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // controle se necessário
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // controle se necessário
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // controle se necessário
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // controle se necessário
-    }
-
-    public Long getId() {
-        return user.getId();
+        return true;
     }
 
     public String getName() {
         return user.getName();
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 }

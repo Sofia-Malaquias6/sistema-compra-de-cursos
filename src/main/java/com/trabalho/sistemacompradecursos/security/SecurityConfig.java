@@ -18,35 +18,28 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Pode ativar depois se quiser configurar corretamente
-
+                .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll() // públicos
-                        .anyRequest().authenticated() // todo o resto precisa estar autenticado
+                        .requestMatchers("/login", "/h2-console/**", "/css/**", "/js/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
-
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
-                )
-
-                .userDetailsService(userDetailsService)
-
-                .sessionManagement(session -> session
-                        .maximumSessions(1) // impede múltiplos logins simultâneos, opcional
-                        .expiredUrl("/login?expired")
                 );
+
+        // Libera o H2 console
+        http.headers().frameOptions().disable();
 
         return http.build();
     }
@@ -60,5 +53,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

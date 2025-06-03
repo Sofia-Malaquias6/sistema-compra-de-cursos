@@ -38,6 +38,10 @@ public class EnrollmentService {
     }
 
 
+    public List<EnrollmentDTO> findEnrollmentsByUserAndCourseId(String userId, String courseId) {
+
+        return repository.findByUserIdAndCourseId(safeLongNull(userId), safeLongNull(courseId)).stream().map(Enrollment::toDTO).toList();
+    }
 
     public List<EnrollmentDTO> findEnrollmentsByUser(String userId) {
 

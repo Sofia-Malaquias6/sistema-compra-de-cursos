@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Horários do Curso</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<header>
+    <h1>Horários do Curso</h1>
+    <p>Bem-vindo, <span th:text="${user.name}">Usuário</span>!</p>
+    <a th:href="@{/home}">Home</a> |
+    <a th:href="@{/courses}">Voltar para Cursos</a> |
+    <a th:href="@{|/schedules/course/${course.id}/new|}">Novo Horário</a> |
+    <a th:href="@{/logout}">Sair</a>
+</header>
+
+<h2 th:text="'Curso: ' + ${course.name}"></h2>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tópico</th>
+        <th>Data</th>
+        <th>Dia da Semana</th>
+        <th>Início</th>
+        <th>Fim</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="schedule : ${schedules}">
+        <td th:text="${schedule.id}"></td>
+        <td th:text="${schedule.topic}"></td>
+        <td th:text="${schedule.date}"></td>
+        <td th:text="${schedule.dayOfWeek}"></td>
+        <td th:text="${schedule.startTime}"></td>
+        <td th:text="${schedule.endTime}"></td>
+        <td>
+            <a th:href="@{|/schedules/edit/${schedule.id}|}">Editar</a> |
+            <a th:href="@{|/schedules/course/${course.id}/delete/${schedule.id}|}"
+               onclick="return confirm('Confirma exclusão?')">Excluir</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

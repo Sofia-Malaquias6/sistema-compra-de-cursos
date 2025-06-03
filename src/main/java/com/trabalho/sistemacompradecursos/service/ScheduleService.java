@@ -1,11 +1,13 @@
 package com.trabalho.sistemacompradecursos.service;
 import com.trabalho.sistemacompradecursos.dto.CourseDTO;
 import com.trabalho.sistemacompradecursos.dto.ScheduleDTO;
+import com.trabalho.sistemacompradecursos.model.Course;
 import com.trabalho.sistemacompradecursos.model.Schedule;
 import com.trabalho.sistemacompradecursos.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.trabalho.sistemacompradecursos.model.Schedule.fromDTO;
 import static com.trabalho.sistemacompradecursos.model.Schedule.toDTO;
@@ -30,13 +32,13 @@ public class ScheduleService {
     }
 
 
-    public List<Schedule> findSchedulesByCourse(String courseId) {
-        return repository.findByCourseId(safeLongNull(courseId));
+    public List<ScheduleDTO> findSchedulesByCourse(String courseId) {
+        return repository.findByCourseId(safeLongNull(courseId)).stream().map(Schedule::toDTO).collect(Collectors.toList());
     }
     public void deleteSchedule(String scheduleId) {
         repository.deleteById(safeLongNull(scheduleId));
     }
-    public Optional<Schedule> findById(String scheduleId) {
-        return repository.findById(safeLongNull(scheduleId));
+    public Optional<ScheduleDTO> findScheduleById(String scheduleId) {
+        return repository.findById(safeLongNull(scheduleId)).map(Schedule::toDTO);
     }
 }

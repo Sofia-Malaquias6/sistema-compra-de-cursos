@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${schedule.id == null} ? 'Novo Horário' : 'Editar Horário'">Horário</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<header>
+    <h1 th:text="${schedule.id == null} ? 'Novo Horário' : 'Editar Horário'"></h1>
+    <a th:href="@{/home}">Home</a> |
+    <a th:href="@{/logout}">Sair</a>
+</header>
+
+<form th:action="@{${schedule.id == null} ? '/schedules/save' : '/schedules/update'}"
+      th:object="${schedule}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+    <input type="hidden" th:field="*{course.id}"/>
+
+    <div>
+        <label for="topic">Tópico:</label>
+        <input type="text" id="topic" th:field="*{topic}" required/>
+    </div>
+    <div>
+        <label for="date">Data (dd/MM/yyyy):</label>
+        <input type="text" id="date" th:field="*{date}" required/>
+    </div>
+    <div>
+        <label for="dayOfWeek">Dia da Semana:</label>
+        <input type="text" id="dayOfWeek" th:field="*{dayOfWeek}" required/>
+    </div>
+    <div>
+        <label for="startTime">Início (HH:mm):</label>
+        <input type="text" id="startTime" th:field="*{startTime}" required/>
+    </div>
+    <div>
+        <label for="endTime">Fim (HH:mm):</label>
+        <input type="text" id="endTime" th:field="*{endTime}" required/>
+    </div>
+
+    <button type="submit" th:text="${schedule.id == null} ? 'Criar' : 'Atualizar'"></button>
+</form>
+
+</body>
+</html>

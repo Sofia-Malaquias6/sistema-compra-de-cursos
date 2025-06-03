@@ -1,21 +1,19 @@
 package com.trabalho.sistemacompradecursos.service;
 
+import com.trabalho.sistemacompradecursos.dto.GradeDTO;
 import com.trabalho.sistemacompradecursos.model.Grade;
 import com.trabalho.sistemacompradecursos.repository.GradeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class GradeService {
 
     private final GradeRepository repository;
 
-    public GradeService(GradeRepository repository) {
-        this.repository = repository;
-    }
-
-    public Grade addGrade(Long enrollmentId, Double gradeValue, String description) {
-        // TODO: Add grade for enrollment
+    public GradeDTO createGrade(Long enrollmentId, Double gradeValue, String description) {
         return null;
     }
 

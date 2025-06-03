@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class FormatUtils {
 
@@ -45,7 +46,45 @@ public class FormatUtils {
         return value != null ? String.valueOf(value) : null;
     }
 
+    public static String safeStringDouble(Double value){
+        return value != null ? String.valueOf(value) : null;
+    }
+
+    public static Double safeDoubleNull(String value){
+        return value != null && !value.isEmpty() ? Double.parseDouble(value) : null;
+    }
+
     public static Long safeLongNull(String value){
-        return value != null ? Long.parseLong(value) : null;
+        return value != null && !value.isEmpty() ? Long.parseLong(value) : null;
+    }
+
+    public static String safeStringDate(LocalDate date) {
+        return date != null ? date.format(DATE_FORMAT) : null;
+    }
+
+    public static String safeStringTime(LocalTime time) {
+        return time != null ? time.format(TIME_FORMAT) : null;
+    }
+
+    public static String safeStringNull(Long value) {
+        return value != null ? String.valueOf(value) : null;
+    }
+
+    public static LocalDate safeLocalDate(String value) {
+        if (value == null || value.isBlank()) return null;
+        try {
+            return LocalDate.parse(value, DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format: " + value + ". Expected format: dd/MM/yyyy");
+        }
+    }
+
+    public static LocalTime safeLocalTime(String value) {
+        if (value == null || value.isBlank()) return null;
+        try {
+            return LocalTime.parse(value, TIME_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid time format: " + value + ". Expected format: HH:mm");
+        }
     }
 }

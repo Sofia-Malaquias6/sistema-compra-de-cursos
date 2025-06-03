@@ -27,17 +27,25 @@
     <tbody>
     <tr th:each="course : ${courses}">
         <td th:text="${course.id}"></td>
-        <td th:text="${course.title}"></td>
+        <td th:text="${course.name}"></td>
         <td th:text="${course.description}"></td>
-        <td th:text="${course.duration}"></td>
+        <td th:text="${course.price}"></td>
         <td>
             <a th:href="@{|/courses/edit/${course.id}|}">Editar</a> |
+            <a th:href="@{|/schedules/course/${course.id}|}">Listar Agendamento</a> |
             <a th:href="@{|/courses/delete/${course.id}|}"
                onclick="return confirm('Confirma exclusão?')">Excluir</a>
         </td>
     </tr>
     </tbody>
 </table>
+<br/>
+<div th:if="${errorScheduleExists}">
+    <p style="color:red;">Não é possível remover o curso, pois tem agendamento cadastrado.</p>
+</div>
+<div th:if="${errorEnrollmentExists}">
+    <p style="color:red;">Não é possível remover o curso, pois tem matricula cadastrada.</p>
+</div>
 
 </body>
 </html>

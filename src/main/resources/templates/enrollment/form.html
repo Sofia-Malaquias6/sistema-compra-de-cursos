@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Nova Matrícula</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<header>
+    <h1>Nova Matrícula</h1>
+    <a th:href="@{/enrollments}">Voltar</a> |
+    <a th:href="@{/logout}">Sair</a>
+</header>
+
+<form th:action="@{/enrollments/save}" method="post">
+    <div>
+        <label for="courseId">Selecione o Curso:</label>
+        <select name="courseId" id="courseId" required>
+            <option th:each="course : ${courses}"
+                    th:value="${course.id}"
+                    th:text="${course.name}">
+            </option>
+        </select>
+    </div>
+
+    <button type="submit">Matricular</button>
+</form>
+
+</body>
+</html>

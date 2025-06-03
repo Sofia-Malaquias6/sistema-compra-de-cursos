@@ -4,6 +4,7 @@ import com.trabalho.sistemacompradecursos.dto.EnrollmentDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import static com.trabalho.sistemacompradecursos.utils.FormatUtils.safeStringNul
 @Data
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

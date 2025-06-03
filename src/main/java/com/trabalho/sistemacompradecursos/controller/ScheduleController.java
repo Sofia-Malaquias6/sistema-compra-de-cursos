@@ -1,81 +1,93 @@
 package com.trabalho.sistemacompradecursos.controller;
 
-import com.trabalho.sistemacompradecursos.dto.CourseDTO;
 import com.trabalho.sistemacompradecursos.dto.ScheduleDTO;
-import com.trabalho.sistemacompradecursos.model.Schedule;
+import com.trabalho.sistemacompradecursos.security.UserDetailsImpl;
+import com.trabalho.sistemacompradecursos.service.CourseService;
 import com.trabalho.sistemacompradecursos.service.ScheduleService;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/schedules")
+@RequiredArgsConstructor
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    private final CourseService courseService;
 
-    public ScheduleController(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
-    }
-
+    // Listar todos
     @GetMapping("/course/{courseId}")
-    public String viewSchedules(@PathVariable String courseId, Model model) {
-        List<Schedule> schedules = scheduleService.findSchedulesByCourse(courseId);
-
+    public String listSchedules(@PathVariable String courseId, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<ScheduleDTO> schedules = scheduleService.findSchedulesByCourse(courseId);
         model.addAttribute("schedules", schedules);
-        model.addAttribute("courseId", courseId);
-        model.addAttribute("newSchedule", new ScheduleDTO(null, null, "", "", "",null));
+        model.addAttribute("user", userDetails.getUser());
+        courseService.findCourseById(courseId).ifPresentOrElse(course -> {
+            model.addAttribute("course", course);
+        }, () -> {
+            throw new IllegalArgumentException("Curso não encontrado: " + courseId);
+        });
+        if(schedules.isEmpty()){
+            return showCreateForm(courseId, model, userDetails);
+        }else{
+            return "schedule/list"; // templates/schedule/list.html
 
-        return "schedules";
+        }
     }
 
-    @PostMapping("/course/{courseId}/add")
-    public String addSchedule(
-            @PathVariable String courseId,
-            @RequestParam String dayOfWeek,
-            @RequestParam String startTime,
-            @RequestParam String endTime
-    ) {
-        ScheduleDTO dto = new ScheduleDTO(null, null, dayOfWeek, startTime, endTime,null);
-        scheduleService.createSchedule(dto);
-        return "redirect:/schedules/course/" + courseId;
+    // Formulário para criar novo
+    @GetMapping("/course/{courseId}/new")
+    public String showCreateForm(@PathVariable String courseId, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        model.addAttribute("schedule", new ScheduleDTO(null, "", "", "", "", "", courseService.findCourseById(courseId).orElseThrow()));
+        model.addAttribute("course", courseService.findCourseById(courseId).orElseThrow());
+        model.addAttribute("user", userDetails.getUser());
+        return "schedule/form"; // templates/schedule/form.html
     }
 
-    @GetMapping("/{scheduleId}/edit")
-    public String editScheduleForm(@PathVariable String scheduleId, Model model) {
-        Schedule schedule = scheduleService.findById(scheduleId)
-                .orElseThrow(() -> new IllegalArgumentException("Schedule não encontrado: " + scheduleId));
-
-        ScheduleDTO dto = new ScheduleDTO(
-                schedule.getId(),
-                schedule.getCourse().getId(),
-                schedule.getDayOfWeek(),
-                schedule.getStartTime(),
-                schedule.getEndTime()
-        );
-
-        model.addAttribute("schedule", dto);
-        return "schedule-edit";
+    // Salvar novo
+    @PostMapping("/save")
+    public String saveSchedule(@ModelAttribute("schedule") ScheduleDTO scheduleDTO, BindingResult result, @AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("course", scheduleDTO.course());
+            model.addAttribute("user", userDetails.getUser());  // ✅ Linha adicionada
+            return "schedule/form";
+        }
+        scheduleService.createSchedule(scheduleDTO);
+        return listSchedules(scheduleDTO.course().id(),model,userDetails);
     }
 
-    @PostMapping("/{scheduleId}/edit")
-    public String editSchedule(
-            @PathVariable Long scheduleId,
-            @RequestParam String dayOfWeek,
-            @RequestParam String startTime,
-            @RequestParam String endTime,
-            @RequestParam Long courseId
-    ) {
-        ScheduleDTO dto = new ScheduleDTO(scheduleId, courseId, dayOfWeek, startTime, endTime);
-        scheduleService.updateSchedule(dto);
-        return "redirect:/schedules/course/" + courseId;
+    // Form para editar
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable String id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        scheduleService.findScheduleById(id).ifPresentOrElse(schedule -> {
+            model.addAttribute("schedule", schedule);
+            model.addAttribute("user", userDetails.getUser());
+        }, () -> {
+            throw new IllegalArgumentException("Curso não encontrado: " + id);
+        });
+        return "schedule/form";
     }
 
-    @GetMapping("/{scheduleId}/delete")
-    public String deleteSchedule(@PathVariable Long scheduleId, @RequestParam Long courseId) {
-        scheduleService.deleteSchedule(scheduleId);
-        return "redirect:/schedules/course/" + courseId;
+    // Atualizar
+    @PostMapping("/update")
+    public String updateSchedule(@ModelAttribute("schedule") ScheduleDTO scheduleDTO, Model model, BindingResult result, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (result.hasErrors()) {
+            return "schedule/form";
+        }
+        scheduleService.updateSchedule(scheduleDTO);
+        return listSchedules(scheduleDTO.course().id(),model,userDetails);
+    }
+
+    // Deletar
+    @GetMapping("/course/{courseId}/delete/{id}")
+    public String deleteSchedule(@PathVariable String courseId, Model model, @PathVariable String id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        scheduleService.deleteSchedule(id);
+        return listSchedules(courseId,model,userDetails);
     }
 }

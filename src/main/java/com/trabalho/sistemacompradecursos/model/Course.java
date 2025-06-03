@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.trabalho.sistemacompradecursos.utils.FormatUtils.*;
-import static com.trabalho.sistemacompradecursos.utils.FormatUtils.parseMoney;
 
 @Data
 @Entity
@@ -23,17 +22,30 @@ public class Course {
     private String name;
     private String description;
     private Double price;
+
     @OneToMany(mappedBy = "course")
     private List<Enrollment> enrollments = new ArrayList<>();
+
     @OneToMany(mappedBy = "course")
     private List<Schedule> schedules = new ArrayList<>();
 
     public static CourseDTO toDTO(Course course) {
-        return new CourseDTO(safeStringNull(course.getId()),course.getName(),course.getDescription(),formatMoney(course.getPrice()));
+        return new CourseDTO(
+                safeStringNull(course.getId()),
+                course.getName(),
+                course.getDescription(),
+                formatMoney(course.getPrice())
+        );
     }
 
     public static Course fromDTO(CourseDTO course) {
-        return new Course(safeLongNull( course.id()),course.name(),course.description(),parseMoney(course.price()),null,null);
+        return new Course(
+                safeLongNull(course.id()),
+                course.name(),
+                course.description(),
+                parseMoney(course.price()),
+                null,
+                null
+        );
     }
 }
-

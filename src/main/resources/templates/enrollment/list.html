@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Minhas Matrículas</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<header>
+    <h1>Minhas Matrículas</h1>
+    <p>Bem-vindo, <span th:text="${user.name}">Usuário</span>!</p>
+    <a th:href="@{/home}">Home</a> |
+    <a th:href="@{/enrollments/new}">Nova Matrícula</a> |
+    <a th:href="@{/logout}">Sair</a>
+</header>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Curso</th>
+        <th>Status</th>
+        <th>Data da Matrícula</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="enrollment : ${enrollments}">
+        <td th:text="${enrollment.id}"></td>
+        <td th:text="${enrollment.course.name}"></td>
+        <td th:text="${enrollment.status}"></td>
+        <td th:text="${enrollment.enrollmentDate}"></td>
+        <td>
+            <a th:href="@{|/enrollments/delete/${enrollment.id}|}"
+               onclick="return confirm('Confirma cancelamento da matrícula?')">Cancelar</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

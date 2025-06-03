@@ -1,8 +1,7 @@
 package com.trabalho.sistemacompradecursos.controller;
 
-import com.trabalho.sistemacompradecursos.dto.UserDTO;
-import jakarta.servlet.http.HttpSession;
-import org.hibernate.Remove;
+import com.trabalho.sistemacompradecursos.security.UserDetailsImpl;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,19 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     @GetMapping("/")
-    public String redirectToHome() {
+    public String index() {
         return "redirect:/home";
     }
 
     @GetMapping("/home")
-    public String home(HttpSession session, Model model) {
-        UserDTO user = (UserDTO) session.getAttribute("loggedUser");
-
-        if (user == null) {
-            return "redirect:/login"; // Se não estiver logado, redireciona
-        }
-
-        model.addAttribute("user", user);
-        return "home"; // Abre templates/home.html
+    public String home(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
+        model.addAttribute("user", userDetails.getUser());
+        return "home";
     }
 }
