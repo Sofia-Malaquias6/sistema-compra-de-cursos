@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Nova Nota</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<header>
+    <h1>Nova Nota</h1>
+    <a th:href="@{/grades}">Voltar</a> |
+    <a th:href="@{/logout}">Sair</a>
+</header>
+
+<form th:action="@{/grades/save}" method="post">
+    <div>
+        <label for="enrollmentId">Selecione a Matricula:</label>
+        <select name="enrollmentId" id="enrollmentId" required>
+            <option th:each="enrollment : ${enrollments}"
+                    th:value="${enrollment.id}"
+                    th:text="${enrollment.name}">
+            </option>
+        </select>
+
+    </div>
+
+    <button type="submit">Cadastrar nota</button>
+</form>
+
+</body>
+</html>

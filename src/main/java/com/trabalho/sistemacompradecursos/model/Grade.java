@@ -34,8 +34,7 @@ public class Grade {
                 safeLongNull(grade.id()),
                 safeDoubleNull(grade.grade()),
                 grade.description(),
-               null
-                //todo comtinuar grade
+               Enrollment.fromDTO(grade.enrollment())
 
         );
     }

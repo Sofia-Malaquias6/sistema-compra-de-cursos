@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.trabalho.sistemacompradecursos.utils.FormatUtils.safeLongNull;
+import static com.trabalho.sistemacompradecursos.utils.FormatUtils.safeStringNull;
+
 @Data
 @Entity
 @Table(name="users")
@@ -25,6 +28,9 @@ public class User {
     private List<Enrollment> enrollments = new ArrayList<>();
 
     public static UserDTO toDTO(User user){
-        return new UserDTO(String.valueOf(user.getId()), user.getName(), user.getEmail(), "");
+        return new UserDTO(safeStringNull(user.getId()), user.getName(), user.getEmail(), "");
+    }
+    public static User fromDTO(UserDTO user){
+        return new User(safeLongNull(user.id()), user.name(), user.email(), "",null);
     }
 }
