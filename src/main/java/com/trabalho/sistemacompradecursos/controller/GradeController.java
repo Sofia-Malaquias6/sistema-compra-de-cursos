@@ -14,10 +14,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 import static com.trabalho.sistemacompradecursos.utils.FormatUtils.*;
 
 @Controller
-@RequestMapping
+@RequestMapping("/grades")
 @RequiredArgsConstructor
 public class GradeController {
     private final GradeService service;
@@ -25,11 +27,11 @@ public class GradeController {
 
     @GetMapping("/enrollment/{enrollmentId}")
     public String viewGrades(@PathVariable String enrollmentId, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
-       
-            model.addAttribute("grades",  service.findGradesByEnrollment(enrollmentId));
-            model.addAttribute("user",  userDetails.getUser());
-            model.addAttribute("average", service.calculateAverage(enrollmentId));
-     
+        model.addAttribute("enrollmentId", enrollmentId); // corrigido
+        model.addAttribute("grades",  service.findGradesByEnrollment(enrollmentId));
+        model.addAttribute("user",  userDetails.getUser());
+        model.addAttribute("average", service.calculateAverage(enrollmentId));
+
         return "grade/list";
     }
     // Formulário para criar novo curso
@@ -41,18 +43,24 @@ public class GradeController {
     }
 
     // Salvar novo curso
-    @PostMapping("/save")
-    public String saveGrade(@ModelAttribute("grade") GradeDTO gradeDTO, BindingResult result) {
+    @PostMapping("/enrollment/{enrollmentId}/save")
+    public String saveGrade(@PathVariable String enrollmentId,@ModelAttribute("grade") GradeDTO gradeDTO, BindingResult result) {
         if (result.hasErrors()) {
             return "grade/form";
         }
-        service.addGrade(gradeDTO);
-        return "redirect:/grades";
+        // Força a associação com a matrícula correta, sem confiar no formulário
+        EnrollmentDTO enrollment = enrollmentService.findEnrollmentById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Matrícula não encontrada: " + enrollmentId));
+
+        service.addGrade(new GradeDTO(null, gradeDTO.grade(), gradeDTO.description(),enrollment));
+        return "redirect:/grades/enrollment/" + enrollmentId;
     }
 
     // Form para editar curso
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<EnrollmentDTO> enrollments = enrollmentService.findEnrollmentsByUser(safeStringNull(userDetails.getUser().getId()));
+        model.addAttribute("enrollments", enrollments);
         service.findGradeById(id).ifPresentOrElse(grade -> {
             model.addAttribute("grade", grade);
             model.addAttribute("user",  userDetails.getUser());
@@ -63,19 +71,26 @@ public class GradeController {
     }
 
     // Atualizar curso
-    @PostMapping("/update")
-    public String updateGrade(@ModelAttribute("grade") GradeDTO gradeDTO, BindingResult result) {
+    @PostMapping("/enrollment/{enrollmentId}/update/{gradeId}")
+    public String updateGrade(@PathVariable String enrollmentId,
+                              @PathVariable String gradeId,
+                              @ModelAttribute("grade") GradeDTO gradeDTO,
+                              BindingResult result) {
         if (result.hasErrors()) {
             return "grade/form";
         }
-        service.updateGrade(gradeDTO);
-        return "redirect:/grades";
+        // Força a associação com a matrícula correta, sem confiar no formulário
+        EnrollmentDTO enrollment = enrollmentService.findEnrollmentById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Matrícula não encontrada: " + enrollmentId));
+
+        service.updateGrade(new GradeDTO(gradeId, gradeDTO.grade(), gradeDTO.description(),enrollment));
+        return "redirect:/grades/enrollment/" + enrollmentId;
     }
 
     // Deletar curso
-    @GetMapping("/delete/{id}")
-    public String deleteGrade(@PathVariable String id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails, RedirectAttributes redirectAttributes) {
+    @GetMapping("/enrollment/{enrollmentId}/delete/{id}")
+    public String deleteGrade(@PathVariable String enrollmentId,@PathVariable String id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails, RedirectAttributes redirectAttributes) {
         service.deleteGrade(id);
-        return "redirect:/grades";
+        return "redirect:/grades/enrollment/" + enrollmentId;
     }
 }

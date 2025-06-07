@@ -32,7 +32,9 @@
         <td th:text="${enrollment.enrollmentDate}"></td>
         <td>
             <a th:href="@{|/enrollments/delete/${enrollment.id}|}"
-               onclick="return confirm('Confirma cancelamento da matrícula?')">Cancelar</a>
+               onclick="return confirm('Confirma cancelamento da matrícula?')">Cancelar</a>|
+            <a th:href="@{|/grades/enrollment/${enrollment.id}|}">Visualizar notas</a>
+
         </td>
     </tr>
     </tbody>

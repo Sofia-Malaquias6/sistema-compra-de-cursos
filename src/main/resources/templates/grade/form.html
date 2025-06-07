@@ -12,15 +12,19 @@
     <a th:href="@{/logout}">Sair</a>
 </header>
 
-<form th:action="@{/grades/save}" method="post">
+<form th:action="${grade.id == null} ?
+        @{/grades/enrollment/{id}/save(id=${grade.enrollment.id})} :
+        @{/grades/enrollment/{enrollmentId}/update/{gradeId}(enrollmentId=${grade.enrollment.id}, gradeId=${grade.id})}"
+      th:object="${grade}" method="post">
     <div>
-        <label for="enrollmentId">Selecione a Matricula:</label>
-        <select name="enrollmentId" id="enrollmentId" required>
-            <option th:each="enrollment : ${enrollments}"
-                    th:value="${enrollment.id}"
-                    th:text="${enrollment.name}">
-            </option>
-        </select>
+        <label for="grade">Nota:</label>
+        <input type="text" id="grade" th:field="*{grade}" required/>
+    </div>
+
+    <div>
+        <label for="description">Descrição:</label>
+        <input type="text" id="description" th:field="*{description}" required/>
+    </div>
 
     </div>
 

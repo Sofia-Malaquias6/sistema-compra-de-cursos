@@ -5,6 +5,7 @@ import com.trabalho.sistemacompradecursos.dto.GradeDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import static com.trabalho.sistemacompradecursos.utils.FormatUtils.*;
 import static com.trabalho.sistemacompradecursos.utils.FormatUtils.parseMoney;
@@ -12,6 +13,7 @@ import static com.trabalho.sistemacompradecursos.utils.FormatUtils.parseMoney;
 @Data
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +27,7 @@ public class Grade {
                 safeStringNull(grade.getId()),
                 safeStringDouble(grade.getGrade()),
                 grade.getDescription(),
-               Enrollment.toDTO(grade.getEnrollment())
+                Enrollment.toDTO(grade.getEnrollment())
         );
     }
 
@@ -34,7 +36,7 @@ public class Grade {
                 safeLongNull(grade.id()),
                 safeDoubleNull(grade.grade()),
                 grade.description(),
-               Enrollment.fromDTO(grade.enrollment())
+                Enrollment.fromDTO(grade.enrollment())
 
         );
     }
